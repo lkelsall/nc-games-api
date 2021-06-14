@@ -75,12 +75,10 @@ const seed = async (data) => {
   const reviewLookup = createReviewRef(reviews.rows);
   ammendedCommentData = ammendComments(commentData, reviewLookup);
 
-  console.log(
-    await db.query(
-      format(
-        "INSERT INTO comments (body, author, votes, created_at, review_id) VALUES %L RETURNING *;",
-        ammendedCommentData
-      )
+  await db.query(
+    format(
+      "INSERT INTO comments (body, author, votes, created_at, review_id) VALUES %L RETURNING *;",
+      ammendedCommentData
     )
   );
 };
