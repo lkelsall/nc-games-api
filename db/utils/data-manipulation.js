@@ -1,1 +1,5 @@
-// extract any functions you are using to manipulate your data, into this file
+exports.formatCategories = (catData) => {
+  return catData.map((object) => {
+    return [object.slug, object.description];
+  });
+};
