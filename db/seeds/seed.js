@@ -1,6 +1,13 @@
 const db = require("../connection");
 const format = require("pg-format");
-const { formatCategories } = require("../utils/data-manipulation");
+const {
+  formatCategories,
+  formatUsers,
+  formatReviews,
+  createReviewRef,
+  formatComments,
+  ammendComments,
+} = require("../utils/data-manipulation");
 
 const seed = async (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
@@ -24,9 +31,9 @@ const seed = async (data) => {
   await db.query(`CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
     title VARCHAR(200),
-    review_body VARCHAR(500),
+    review_body VARCHAR(1000),
     designer VARCHAR(200),
-    review_img_url VARCHAR(500) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+    review_img_url VARCHAR(1000) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
     votes INT DEFAULT 0,
     category VARCHAR(200) REFERENCES categories(slug),
     owner VARCHAR(200) REFERENCES users(username),
@@ -38,19 +45,44 @@ const seed = async (data) => {
       review_id INT REFERENCES reviews(review_id),
       votes INT DEFAULT 0,
       created_at DATE DEFAULT current_date,
-      body VARCHAR(500)
+      body VARCHAR(1000)
     );`);
 
-  const insertData = await db.query(
+  await db.query(
     format(
       `INSERT INTO categories (
     slug, description)
-    VALUES %L RETURNING *;
+    VALUES %L;
   `,
       formatCategories(categoryData)
     )
   );
-  console.log(insertData.rows);
+
+  await db.query(
+    format(
+      "INSERT INTO users (username, name, avatar_url) VALUES %L;",
+      formatUsers(userData)
+    )
+  );
+
+  const reviews = await db.query(
+    format(
+      "INSERT INTO reviews (title, review_body, designer, review_img_url, votes, category, owner, created_at) VALUES %L RETURNING *;",
+      formatReviews(reviewData)
+    )
+  );
+
+  const reviewLookup = createReviewRef(reviews.rows);
+  ammendedCommentData = ammendComments(commentData, reviewLookup);
+
+  console.log(
+    await db.query(
+      format(
+        "INSERT INTO comments (body, author, votes, created_at, review_id) VALUES %L RETURNING *;",
+        ammendedCommentData
+      )
+    )
+  );
 };
 
 module.exports = seed;
