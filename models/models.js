@@ -27,18 +27,12 @@ exports.updateReviewVotes = async (reviewId, reqBody) => {
   if (!inc_votes) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
-  const selectResult = await db.query(
-    "SELECT * FROM reviews WHERE review_id = $1",
-    [reviewId]
+  const updateResult = await db.query(
+    "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *",
+    [inc_votes, reviewId]
   );
-  if (selectResult.rows.length === 0) {
+  if (updateResult.rows.length === 0) {
     return Promise.reject({ status: 404, msg: "not found" });
   }
-  const currentVotes = selectResult.rows[0].votes;
-  const incrementedVotes = currentVotes + inc_votes;
-  const updateResult = await db.query(
-    "UPDATE reviews SET votes = $1 WHERE review_id = $2 RETURNING *",
-    [incrementedVotes, reviewId]
-  );
   return updateResult.rows[0];
 };
