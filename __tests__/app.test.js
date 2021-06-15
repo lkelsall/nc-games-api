@@ -7,8 +7,19 @@ const request = require("supertest");
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
-describe("GET: /api/categories", () => {
-  it("200: responds with an array of category objects", () => {
+describe("invalid URL", () => {
+  it("404 -- if an invalid endpoint is requested, responds with an error", () => {
+    return request(app)
+      .get("/api/invalid_endpoint")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+});
+
+describe("GET /api/categories", () => {
+  it("200 -- responds with an array of category objects", () => {
     return request(app)
       .get("/api/categories")
       .expect(200)
