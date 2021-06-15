@@ -12,6 +12,10 @@ exports.selectReviewById = async (reviewId) => {
     [reviewId]
   );
   const review = reviewsResult.rows[0];
+  // throws 404 if requested review isn't found
+  if (reviewsResult.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "not found" });
+  }
   const commentsResult = await db.query(
     `SELECT * FROM comments WHERE review_id = ${review.review_id}`
   );

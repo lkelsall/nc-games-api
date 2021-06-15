@@ -58,4 +58,22 @@ describe("GET /api/reviews/:review_id", () => {
         });
       });
   });
+
+  it("400 -- if the requested review_id is not valid, responds with an error", () => {
+    return request(app)
+      .get("/api/reviews/jenga")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+
+  it("404 -- if the requested review_id doesn't exist, responds with an error", () => {
+    return request(app)
+      .get("/api/reviews/99")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
 });

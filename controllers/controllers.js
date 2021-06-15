@@ -10,7 +10,9 @@ exports.getCategories = (req, res, next) => {
 
 exports.getReviewById = (req, res, next) => {
   const reviewId = req.params.review_id;
-  selectReviewById(reviewId).then((review) => {
-    res.status(200).send({ review: review });
-  });
+  selectReviewById(reviewId)
+    .then((review) => {
+      res.status(200).send({ review: review });
+    })
+    .catch(next);
 };
