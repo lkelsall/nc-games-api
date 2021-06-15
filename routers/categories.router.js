@@ -1,4 +1,4 @@
-const { getCategories } = require("../controllers/controller");
+const { getCategories } = require("../controllers/categories");
 const categoriesRouter = require("express").Router();
 
 categoriesRouter.get("/", getCategories);

@@ -1,17 +1,11 @@
 const db = require("../db/connection");
 
-exports.selectCategories = () => {
-  return db.query("SELECT * FROM categories;").then((result) => {
-    return result.rows;
-  });
-};
-
 exports.selectReviewById = async (reviewId) => {
   const reviewsResult = await db.query(
     `SELECT reviews.*, COUNT(comment_id) AS comment_count 
-    FROM reviews JOIN comments ON reviews.review_id = comments.review_id 
-    WHERE reviews.review_id = $1 
-    GROUP BY reviews.review_id`,
+      FROM reviews JOIN comments ON reviews.review_id = comments.review_id 
+      WHERE reviews.review_id = $1 
+      GROUP BY reviews.review_id`,
     [reviewId]
   );
 

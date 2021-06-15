@@ -1,16 +1,4 @@
-const {
-  selectCategories,
-  selectReviewById,
-  updateReviewVotes,
-} = require("../models/models");
-
-exports.getCategories = (req, res, next) => {
-  selectCategories()
-    .then((categories) => {
-      res.status(200).send({ categories: categories });
-    })
-    .catch(next);
-};
+const { selectReviewById, updateReviewVotes } = require("../models/reviews");
 
 exports.getReviewById = (req, res, next) => {
   const reviewId = req.params.review_id;
