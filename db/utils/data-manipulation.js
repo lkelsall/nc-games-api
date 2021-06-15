@@ -12,11 +12,15 @@ exports.formatUsers = (userData) => {
 
 exports.formatReviews = (reviewData) => {
   return reviewData.map((reviewObj) => {
+    const url =
+      reviewObj.review_img_url ||
+      "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg";
+
     return [
       reviewObj.title,
       reviewObj.review_body,
       reviewObj.designer,
-      reviewObj.review_img_url,
+      url,
       reviewObj.votes,
       reviewObj.category,
       reviewObj.owner,
