@@ -37,7 +37,7 @@ const seed = async (data) => {
     votes INT DEFAULT 0,
     category VARCHAR(200) REFERENCES categories(slug),
     owner VARCHAR(200) REFERENCES users(username),
-    created_at DATE DEFAULT current_date);`);
+    created_at TIMESTAMP DEFAULT current_timestamp);`);
 
   await db.query(`CREATE TABLE comments (
       comment_id SERIAL PRIMARY KEY,

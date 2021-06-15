@@ -1,8 +1,8 @@
-const db = require("../db/connection.js");
-const testData = require("../db/data/test-data/index.js");
-const seed = require("../db/seeds/seed.js");
-const app = require("../app");
 const request = require("supertest");
+const app = require("../app");
+const seed = require("../db/seeds/seed.js");
+const testData = require("../db/data/test-data/index.js");
+const db = require("../db/connection.js");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -32,6 +32,29 @@ describe("GET /api/categories", () => {
               description: expect.any(String),
             })
           );
+        });
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id", () => {
+  it("200 -- responds with the requested review object", () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.review).toEqual({
+          title: "Jenga",
+          review_id: 2,
+          designer: "Leslie Scott",
+          owner: "philippaclaire9",
+          review_body: "Fiddly fun for all the family",
+          category: "dexterity",
+          created_at: "2021-01-18T10:01:41.251Z",
+          votes: 5,
+          review_img_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          comment_count: 3,
         });
       });
   });

@@ -1,5 +1,5 @@
 const express = require("express");
-const { getCategories } = require("./controllers/controllers");
+const { getCategories, getReviewById } = require("./controllers/controllers");
 const { handle500s, handle404s } = require("./error-handling");
 
 const app = express();
@@ -7,8 +7,9 @@ const app = express();
 // middleware
 app.use(express.json());
 
-// endpoints
+// endpoint routing
 app.get("/api/categories", getCategories);
+app.get("/api/reviews/:review_id", getReviewById);
 
 // catch-all endpoint
 app.use(handle404s);
