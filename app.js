@@ -1,5 +1,9 @@
 const express = require("express");
-const { getCategories, getReviewById } = require("./controllers/controllers");
+const {
+  getCategories,
+  getReviewById,
+  patchReviewVotes,
+} = require("./controllers/controllers");
 const {
   handle500s,
   handle404s,
@@ -15,6 +19,7 @@ app.use(express.json());
 // endpoint routing
 app.get("/api/categories", getCategories);
 app.get("/api/reviews/:review_id", getReviewById);
+app.patch("/api/reviews/:review_id", patchReviewVotes);
 
 // catch-all endpoint
 app.use(handle404s);

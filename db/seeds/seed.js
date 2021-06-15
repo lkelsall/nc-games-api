@@ -44,7 +44,7 @@ const seed = async (data) => {
       author VARCHAR(200) REFERENCES users(username),
       review_id INT REFERENCES reviews(review_id),
       votes INT DEFAULT 0,
-      created_at DATE DEFAULT current_date,
+      created_at TIMESTAMP DEFAULT current_timestamp,
       body VARCHAR(1000)
     );`);
 
