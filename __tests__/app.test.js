@@ -213,4 +213,13 @@ describe("GET /api/reviews", () => {
         );
       });
   });
+
+  it("404 -- responds with an error when category query value is valid but no reviews are found", () => {
+    return request(app)
+      .get("/api/reviews?category=childrens%20games")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
 });
