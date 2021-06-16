@@ -31,7 +31,11 @@ exports.updateReviewVotes = async (reviewId, reqBody) => {
   return updateResult.rows[0];
 };
 
-exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
+exports.selectReviews = async (
+  sort_by = "created_at",
+  order = "DESC",
+  category
+) => {
   const validColumns = [
     "owner",
     "title",
@@ -57,11 +61,19 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
   }
   query.text += `  GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`;
 
-  return db.query(query).then((result) => {
-    if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "not found" });
+  const reviewsRes = await db.query(query);
+
+  if (reviewsRes.rows.length === 0) {
+    const categoryResult = await db.query(
+      "SELECT * FROM categories WHERE slug = $1",
+      [category]
+    );
+    if (categoryResult.rows.length === 0) {
+      return Promise.reject({ status: 400, msg: "bad request" });
     } else {
-      return result.rows;
+      return Promise.reject({ status: 404, msg: "not found" });
     }
-  });
+  } else {
+    return reviewsRes.rows;
+  }
 };
