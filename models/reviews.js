@@ -41,7 +41,10 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC") => {
     "votes",
     "comment_count",
   ];
-  if (!validColumns.includes(sort_by, order)) {
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+  if (!["ASC", "DESC"].includes(order.toUpperCase())) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
   return db
