@@ -32,6 +32,18 @@ exports.updateReviewVotes = async (reviewId, reqBody) => {
 };
 
 exports.selectReviews = (sort_by = "created_at") => {
+  const validColumns = [
+    "owner",
+    "title",
+    "review_id",
+    "category",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
   return db
     .query(
       `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, COUNT(comment_id) AS comment_count 

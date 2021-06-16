@@ -131,7 +131,7 @@ describe("PATCH /api/reviews/:review_id", () => {
 });
 
 describe("GET /api/reviews", () => {
-  test("200 -- responds with an array of review objects", () => {
+  it("200 -- responds with an array of review objects", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -153,7 +153,8 @@ describe("GET /api/reviews", () => {
         });
       });
   });
-  test("200 -- by default, responds with reviews sorted by date created in descending order", () => {
+
+  it("200 -- by default, responds with reviews sorted by date created in descending order", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -161,7 +162,8 @@ describe("GET /api/reviews", () => {
         expect(body.reviews).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("200 -- responds with reviews sorted by the property provided via query, in descending order by default", async () => {
+
+  it("200 -- responds with reviews sorted by the property provided via query, in descending order by default", async () => {
     const idSortRes = await request(app).get("/api/reviews?sort_by=review_id");
     expect(idSortRes.body.reviews).toBeSortedBy("review_id", {
       descending: true,
@@ -176,5 +178,14 @@ describe("GET /api/reviews", () => {
     expect(reviews).toBeSortedBy("comment_count", {
       descending: true,
     });
+  });
+
+  it("400 -- responds with an error if the sort_by query value is not a valid column name", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=not_a_column")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
   });
 });
