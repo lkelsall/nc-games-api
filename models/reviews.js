@@ -5,7 +5,7 @@ exports.selectReviewById = async (reviewId) => {
     `SELECT reviews.*, COUNT(comment_id) AS comment_count 
       FROM reviews JOIN comments ON reviews.review_id = comments.review_id 
       WHERE reviews.review_id = $1 
-      GROUP BY reviews.review_id`,
+      GROUP BY reviews.review_id;`,
     [reviewId]
   );
 
@@ -22,7 +22,7 @@ exports.updateReviewVotes = async (reviewId, reqBody) => {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
   const updateResult = await db.query(
-    "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *",
+    "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;",
     [inc_votes, reviewId]
   );
   if (updateResult.rows.length === 0) {
@@ -31,13 +31,13 @@ exports.updateReviewVotes = async (reviewId, reqBody) => {
   return updateResult.rows[0];
 };
 
-exports.selectReviews = () => {
+exports.selectReviews = (sort_by = "created_at") => {
   return db
     .query(
       `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, COUNT(comment_id) AS comment_count 
   FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id 
   GROUP BY reviews.review_id
-  ORDER BY created_at DESC;`
+  ORDER BY ${sort_by} DESC;`
     )
     .then((result) => {
       return result.rows;
