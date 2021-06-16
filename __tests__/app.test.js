@@ -188,4 +188,9 @@ describe("GET /api/reviews", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+
+  it("200 -- responds with review sorted in the order provided via query", async () => {
+    const ascRes = await request(app).get("/api/reviews?order=asc");
+    expect(ascRes.body.reviews).toBeSortedBy("created_at", { ascending: true });
+  });
 });
