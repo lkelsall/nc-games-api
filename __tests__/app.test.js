@@ -153,4 +153,12 @@ describe("GET /api/reviews", () => {
         });
       });
   });
+  test("200 -- by default, responds with reviews sorted by date created in descending order", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toBeSortedBy("created_at", { descending: true });
+      });
+  });
 });
