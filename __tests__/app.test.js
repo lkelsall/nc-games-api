@@ -202,4 +202,15 @@ describe("GET /api/reviews", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+
+  it("200 -- responds with reviews filtered by the category value provided via query", () => {
+    return request(app)
+      .get("/api/reviews?category=dexterity")
+      .expect(200)
+      .then(({ body }) => {
+        body.reviews.forEach((review) =>
+          expect(review.category).toBe("dexterity")
+        );
+      });
+  });
 });
