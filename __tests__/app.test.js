@@ -193,4 +193,13 @@ describe("GET /api/reviews", () => {
     const ascRes = await request(app).get("/api/reviews?order=asc");
     expect(ascRes.body.reviews).toBeSortedBy("created_at", { ascending: true });
   });
+
+  it("400 -- responds with an error if the order query has a value other than 'asc' or 'desc'", () => {
+    return request(app)
+      .get("/api/reviews?order=none")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
