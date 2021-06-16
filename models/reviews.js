@@ -31,7 +31,7 @@ exports.updateReviewVotes = async (reviewId, reqBody) => {
   return updateResult.rows[0];
 };
 
-exports.selectReviews = (sort_by = "created_at") => {
+exports.selectReviews = (sort_by = "created_at", order = "DESC") => {
   const validColumns = [
     "owner",
     "title",
@@ -41,7 +41,7 @@ exports.selectReviews = (sort_by = "created_at") => {
     "votes",
     "comment_count",
   ];
-  if (!validColumns.includes(sort_by)) {
+  if (!validColumns.includes(sort_by, order)) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
   return db
@@ -49,7 +49,7 @@ exports.selectReviews = (sort_by = "created_at") => {
       `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, COUNT(comment_id) AS comment_count 
   FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id 
   GROUP BY reviews.review_id
-  ORDER BY ${sort_by} DESC;`
+  ORDER BY ${sort_by} ${order};`
     )
     .then((result) => {
       return result.rows;
