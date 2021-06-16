@@ -48,31 +48,16 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
 
-  let queryStr = `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, COUNT(comment_id) AS comment_count 
+  const query = {};
+  query.text = `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, COUNT(comment_id) AS comment_count 
   FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id`;
-  // if (category) {
-  //   queryStr += ` WHERE category = $1`;
-  // }
-  // queryStr += `  GROUP BY reviews.review_id
-  // ORDER BY ${sort_by} ${order};`;
-
-  // return db.query(queryStr, ).then((result) => {
-  //   return result.rows;
-  // });
-
   if (category) {
-    return db
-      .query(
-        queryStr +
-          ` WHERE category = $1 GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`,
-        [category]
-      )
-      .then((result) => result.rows);
-  } else {
-    return db
-      .query(
-        queryStr + ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`
-      )
-      .then((result) => result.rows);
+    query.text += ` WHERE category = $1`;
+    query.values = [category];
   }
+  query.text += `  GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`;
+
+  return db.query(query).then((result) => {
+    return result.rows;
+  });
 };
