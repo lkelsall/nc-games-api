@@ -31,7 +31,7 @@ exports.updateReviewVotes = async (reviewId, reqBody) => {
   return updateResult.rows[0];
 };
 
-exports.selectReviews = (sort_by = "created_at", order = "DESC") => {
+exports.selectReviews = (sort_by = "created_at", order = "DESC", category) => {
   const validColumns = [
     "owner",
     "title",
@@ -47,14 +47,32 @@ exports.selectReviews = (sort_by = "created_at", order = "DESC") => {
   if (!["ASC", "DESC"].includes(order.toUpperCase())) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
-  return db
-    .query(
-      `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, COUNT(comment_id) AS comment_count 
-  FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id 
-  GROUP BY reviews.review_id
-  ORDER BY ${sort_by} ${order};`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+
+  let queryStr = `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, COUNT(comment_id) AS comment_count 
+  FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id`;
+  // if (category) {
+  //   queryStr += ` WHERE category = $1`;
+  // }
+  // queryStr += `  GROUP BY reviews.review_id
+  // ORDER BY ${sort_by} ${order};`;
+
+  // return db.query(queryStr, ).then((result) => {
+  //   return result.rows;
+  // });
+
+  if (category) {
+    return db
+      .query(
+        queryStr +
+          ` WHERE category = $1 GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`,
+        [category]
+      )
+      .then((result) => result.rows);
+  } else {
+    return db
+      .query(
+        queryStr + ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`
+      )
+      .then((result) => result.rows);
+  }
 };
