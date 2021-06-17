@@ -3,6 +3,7 @@ const {
   updateReviewVotes,
   selectReviews,
   selectComments,
+  insertComment,
 } = require("../models/reviews");
 
 exports.getReviewById = (req, res, next) => {
@@ -37,6 +38,16 @@ exports.getReviewComments = (req, res, next) => {
   selectComments(reviewId)
     .then((comments) => {
       res.status(200).send({ comments: comments });
+    })
+    .catch(next);
+};
+
+exports.postComment = (req, res, next) => {
+  const reviewId = req.params.review_id;
+  const { username, body } = req.body;
+  insertComment(reviewId, username, body)
+    .then((comment) => {
+      res.status(200).send({ comment: comment });
     })
     .catch(next);
 };

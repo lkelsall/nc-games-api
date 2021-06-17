@@ -91,3 +91,20 @@ exports.selectComments = async (reviewId) => {
 
   return commentsRes.rows;
 };
+
+exports.insertComment = async (reviewId, username, commentBody) => {
+  // this handles the cases where there is no username or body, and also those where these values are of the wrong type
+  // (SQL seems to accept INTs in place of VARCHARs, but not text in place of INTs)
+  if (typeof username !== "string") {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+  if (typeof commentBody !== "string") {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+
+  const insertRes = await db.query(
+    "INSERT INTO comments (author, review_id, body) VALUES ($1, $2, $3) RETURNING *;",
+    [username, reviewId, commentBody]
+  );
+  return insertRes.rows[0];
+};

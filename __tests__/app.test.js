@@ -234,7 +234,7 @@ describe("GET /api/reviews", () => {
   });
 });
 
-describe("/api/reviews/:review_id/comments", () => {
+describe("GET /api/reviews/:review_id/comments", () => {
   it("200 -- responds with an array of comments for the given review_id", () => {
     return request(app)
       .get("/api/reviews/2/comments")
@@ -267,6 +267,97 @@ describe("/api/reviews/:review_id/comments", () => {
   it("400 -responds with an error if the review_id requested is of an invalid type", () => {
     return request(app)
       .get("/api/reviews/bug/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
+
+describe("POST /api/reviews/:review_id/comments", () => {
+  it("200 -- should respond with the newly created comment", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "mallionaire", body: "jenga!" })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            comment_id: 7,
+            author: "mallionaire",
+            review_id: 2,
+            votes: 0,
+            created_at: expect.any(String),
+            body: "jenga!",
+          })
+        );
+      });
+  });
+
+  it("404 -- should respond with an error when the given username does not exist", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "unknown_user", body: "jenga" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+
+  it("400 -- should respond with an error when the given username is of the wrong type", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: 12345, body: "jenga" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+
+  it("404 -- should respond with an error when the requested review_id does not exist", () => {
+    return request(app)
+      .post("/api/reviews/99/comments")
+      .send({ username: "mallionaire", body: "jenga" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+
+  it("400 -- should respond with an error when the requested review_id id of the wrong type", () => {
+    return request(app)
+      .post("/api/reviews/a_string/comments")
+      .send({ username: "mallionaire", body: "jenga" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+
+  it("400 -- should respond with an error if the given body is not of the correct type", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "mallionaire", body: 12345 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+
+  it("400 -- should respond with an error if the request body does not have a body property", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ username: "mallionaire" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+
+  it("400 -- should respond with an error if the request body does not have a username property", () => {
+    return request(app)
+      .post("/api/reviews/2/comments")
+      .send({ body: "jenga!" })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
