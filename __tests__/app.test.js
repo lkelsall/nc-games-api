@@ -372,14 +372,65 @@ describe("GET /api", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.api).toEqual({
-          "api directort": "GET /api",
-          "list categories": "GET /api/categories",
-          "list reviews": "GET /api/reviews?{sort_by, order, category}",
-          "find review by review_id": "GET /api/reviews/:review_id",
-          "update review by review_id": "PATCH /api/reviews/:review_id",
-          "list comments by review_id": "GET /api/reviews/:review_id/comments",
-          "create comment by review_id":
-            "POST /api/reviews/:review_id/comments",
+          "/api": {
+            methods: { GET: { description: "responds with API directory" } },
+          },
+
+          "/api/categories": {
+            methods: {
+              GET: {
+                description: "responds with an array of game categories",
+              },
+            },
+          },
+
+          "/api/reviews": {
+            methods: {
+              GET: {
+                description: "responds with an array of game reviews",
+              },
+              queries: {
+                sort_by: [
+                  "owner",
+                  "title",
+                  "review_id",
+                  "category",
+                  "created_at",
+                  "votes",
+                  "comment_count",
+                ],
+                order: ["ASC", "DESC"],
+                category: "any valid game category",
+              },
+            },
+          },
+
+          "/api/reviews/:review_id": {
+            methods: {
+              GET: {
+                description: "responds with the requested review object",
+              },
+              PATCH: {
+                description:
+                  "increments the vote count of the requested review",
+                req_body: "should include an inc_votes key with a number value",
+              },
+            },
+          },
+
+          "/api/reviews/review_id/comments": {
+            methods: {
+              GET: {
+                description:
+                  "responds with an array of comments for the requested review",
+              },
+              POST: {
+                description: "creates a new comment for the requested review",
+                req_body:
+                  "should include a valid username and comment body text",
+              },
+            },
+          },
         });
       });
   });
