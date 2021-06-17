@@ -364,3 +364,23 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("GET /api", () => {
+  it("200 -- returns an object describing available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.api).toEqual({
+          "api directort": "GET /api",
+          "list categories": "GET /api/categories",
+          "list reviews": "GET /api/reviews?{sort_by, order, category}",
+          "find review by review_id": "GET /api/reviews/:review_id",
+          "update review by review_id": "PATCH /api/reviews/:review_id",
+          "list comments by review_id": "GET /api/reviews/:review_id/comments",
+          "create comment by review_id":
+            "POST /api/reviews/:review_id/comments",
+        });
+      });
+  });
+});
