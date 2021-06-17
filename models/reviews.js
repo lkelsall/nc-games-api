@@ -1,3 +1,4 @@
+const e = require("express");
 const db = require("../db/connection");
 
 exports.selectReviewById = async (reviewId) => {
@@ -76,4 +77,17 @@ exports.selectReviews = async (
   } else {
     return reviewsRes.rows;
   }
+};
+
+exports.selectComments = async (reviewId) => {
+  const commentsRes = await db.query(
+    "SELECT comment_id, votes, created_at, author, body FROM comments WHERE review_id = $1",
+    [reviewId]
+  );
+
+  if (commentsRes.rows.length === 0) {
+    await exports.selectReviewById(reviewId);
+  }
+
+  return commentsRes.rows;
 };

@@ -3,6 +3,7 @@ const app = require("../app");
 const seed = require("../db/seeds/seed.js");
 const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
+const { get } = require("../routers/categories.router");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -226,6 +227,46 @@ describe("GET /api/reviews", () => {
   it("400 -- responds with an error if the category query value is not a valid category", () => {
     return request(app)
       .get("/api/reviews?category=invalid_category")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
+
+describe("/api/reviews/:review_id/comments", () => {
+  it("200 -- responds with an array of comments for the given review_id", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(3);
+        body.comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+
+  it("404 -- responds with an error if there is no review with the requested review_id", () => {
+    return request(app)
+      .get("/api/reviews/99/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+
+  it("400 -responds with an error if the review_id requested is of an invalid type", () => {
+    return request(app)
+      .get("/api/reviews/bug/comments")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("bad request");
