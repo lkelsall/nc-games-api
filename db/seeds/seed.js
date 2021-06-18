@@ -29,7 +29,7 @@ const seed = async (data) => {
   );`);
 
   await db.query(`CREATE TABLE reviews (
-    review_id SERIAL PRIMARY KEY,
+    review_id SERIAL PRIMARY KEY ON DELETE CASCADE,
     title VARCHAR(200) NOT NULL,
     review_body VARCHAR(1000) NOT NULL,
     designer VARCHAR(200) NOT NULL,
