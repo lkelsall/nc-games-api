@@ -172,12 +172,10 @@ describe("GET /api/reviews", () => {
     const commentSortRes = await request(app).get(
       "/api/reviews?sort_by=comment_count"
     );
-    // replace string comment_count values returned by pg with num values
-    const reviews = commentSortRes.body.reviews.map((review) => {
-      return { ...review, comment_count: Number(review.comment_count) };
-    });
-    expect(reviews).toBeSortedBy("comment_count", {
+
+    expect(commentSortRes.body.reviews).toBeSortedBy("comment_count", {
       descending: true,
+      coerce: true,
     });
   });
 
