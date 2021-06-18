@@ -70,9 +70,9 @@ exports.selectReviews = async (
       [category]
     );
     if (categoryResult.rows.length === 0) {
-      return Promise.reject({ status: 400, msg: "bad request" });
-    } else {
       return Promise.reject({ status: 404, msg: "not found" });
+    } else {
+      return reviewsRes.rows;
     }
   } else {
     return reviewsRes.rows;

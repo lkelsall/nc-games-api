@@ -179,7 +179,7 @@ describe("GET /api/reviews", () => {
     });
   });
 
-  it("400 -- responds with an error if the sort_by query value is not a valid column name", () => {
+  it("404 -- responds with an error if the sort_by query value is not a valid column name", () => {
     return request(app)
       .get("/api/reviews?sort_by=not_a_column")
       .expect(400)
@@ -213,21 +213,21 @@ describe("GET /api/reviews", () => {
       });
   });
 
-  it("404 -- responds with an error when category query value is valid but no reviews are found", () => {
+  it("200 -- responds with an empty array when category query value is valid but no reviews are found", () => {
     return request(app)
       .get("/api/reviews?category=children's%20games")
-      .expect(404)
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found");
+        expect(body.reviews).toEqual([]);
       });
   });
 
-  it("400 -- responds with an error if the category query value is not a valid category", () => {
+  it("404 -- responds with an error if the category query value is not a valid category", () => {
     return request(app)
       .get("/api/reviews?category=invalid_category")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad request");
+        expect(body.msg).toBe("not found");
       });
   });
 });
