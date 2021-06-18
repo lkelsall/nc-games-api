@@ -29,7 +29,7 @@ const seed = async (data) => {
   );`);
 
   await db.query(`CREATE TABLE reviews (
-    review_id SERIAL PRIMARY KEY ON DELETE CASCADE,
+    review_id SERIAL PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     review_body VARCHAR(1000) NOT NULL,
     designer VARCHAR(200) NOT NULL,
@@ -42,7 +42,7 @@ const seed = async (data) => {
   await db.query(`CREATE TABLE comments (
       comment_id SERIAL PRIMARY KEY,
       author VARCHAR(200) REFERENCES users(username) NOT NULL,
-      review_id INT REFERENCES reviews(review_id) NOT NULL,
+      review_id INT REFERENCES reviews(review_id) ON DELETE CASCADE NOT NULL,
       votes INT DEFAULT 0,
       created_at TIMESTAMP DEFAULT current_timestamp,
       body VARCHAR(1000) NOT NULL
