@@ -273,11 +273,11 @@ describe("GET /api/reviews/:review_id/comments", () => {
 });
 
 describe("POST /api/reviews/:review_id/comments", () => {
-  it("200 -- should respond with the newly created comment", () => {
+  it("201 -- should respond with the newly created comment", () => {
     return request(app)
       .post("/api/reviews/2/comments")
       .send({ username: "mallionaire", body: "jenga!" })
-      .expect(200)
+      .expect(201)
       .then(({ body }) => {
         expect(body.comment).toEqual(
           expect.objectContaining({
