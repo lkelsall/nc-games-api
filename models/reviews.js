@@ -71,12 +71,9 @@ exports.selectReviews = async (
     );
     if (categoryResult.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "not found" });
-    } else {
-      return reviewsRes.rows;
     }
-  } else {
-    return reviewsRes.rows;
   }
+  return reviewsRes.rows;
 };
 
 exports.selectComments = async (reviewId) => {
