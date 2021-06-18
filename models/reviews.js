@@ -93,8 +93,6 @@ exports.selectComments = async (reviewId) => {
 };
 
 exports.insertComment = async (reviewId, username, commentBody) => {
-  // this handles the cases where there is no username or body, and also those where these values are of the wrong type
-  // (SQL seems to accept INTs in place of VARCHARs, but not text in place of INTs)
   if (typeof username !== "string") {
     return Promise.reject({ status: 400, msg: "bad request" });
   }

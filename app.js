@@ -9,16 +9,11 @@ const {
 
 const app = express();
 
-// middleware
 app.use(express.json());
 
-// endpoint routing
 app.use("/api", apiRouter);
-
-// catch-all endpoint
 app.use(handle404s);
 
-// error handling middleware
 app.use(customErrorHandler);
 app.use(psqlErrorHandler);
 app.use(handle500s);
