@@ -12,7 +12,7 @@ module.exports = [
     votes: 1,
   },
   {
-    title: "JengARRGGGH!!!",
+    title: "JengARRGGGH!",
     designer: "Leslie Scott",
     owner: "grumpy19",
     review_img_url:
