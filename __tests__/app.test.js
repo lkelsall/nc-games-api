@@ -363,6 +363,58 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
+// PATCH COMMENT
+
+describe("PATCH /api/comments/:comment_id", () => {
+  it("200 -- responds with the updated comment", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment.votes).toBe(17);
+      });
+  });
+  it("400 -- responds with an error if the requested comment_id is of the wrong type", () => {
+    return request(app)
+      .patch("/api/comments/one")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  it("404 -- responds with an error if the requested comment doesn't exist", () => {
+    return request(app)
+      .patch("/api/comments/100")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  it("400 -- responds with an error if the request body doesn't include an inc_votes property", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  it("400 -- responds with an error when inc_votes is of the wrong type", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: "wrong_type" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});
+
+// DELETE COMMENT
+
 describe("GET /api", () => {
   it("200 -- returns an object describing available endpoints", () => {
     return request(app)
