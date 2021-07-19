@@ -14,3 +14,14 @@ exports.updateComment = async (comment_id, reqBody) => {
   }
   return updateResult.rows[0];
 };
+
+exports.removeComment = async (comment_id) => {
+  const deleteResult = await db.query(
+    "DELETE FROM comments WHERE comment_id = $1 RETURNING *",
+    [comment_id]
+  );
+  if (deleteResult.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "not found" });
+  }
+  return deleteResult.rows[0];
+};

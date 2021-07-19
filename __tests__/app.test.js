@@ -363,8 +363,6 @@ describe("POST /api/reviews/:review_id/comments", () => {
   });
 });
 
-// PATCH COMMENT
-
 describe("PATCH /api/comments/:comment_id", () => {
   it("200 -- responds with the updated comment", () => {
     return request(app)
@@ -413,7 +411,32 @@ describe("PATCH /api/comments/:comment_id", () => {
   });
 });
 
-// DELETE COMMENT
+describe("DELETE /api/comments/:comment_id", () => {
+  it("200 -- responds with an empty object", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  it("400 -- responds with an error when the requested comment_id is of the wrong type", () => {
+    return request(app)
+      .delete("/api/comments/three")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  it("404 -- responds with an error when the requested comment_id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/100")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+});
 
 describe("GET /api", () => {
   it("200 -- returns an object describing available endpoints", () => {
