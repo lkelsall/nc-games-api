@@ -54,7 +54,7 @@ exports.selectReviews = async (
   }
 
   const query = {};
-  query.text = `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, review_body, COUNT(comment_id) AS comment_count 
+  query.text = `SELECT category, owner, title, reviews.review_id, review_img_url, reviews.created_at, reviews.votes, LEFT(review_body, 120) AS review_preview, COUNT(comment_id) AS comment_count 
   FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id`;
   if (category) {
     query.text += ` WHERE category = $1`;
